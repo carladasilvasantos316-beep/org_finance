@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard – Organiza Finance</title>
+    <meta name="description" content="Painel principal com resumo do saldo, entradas e saídas do mês." />
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+    <!-- ── Navegação ── -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <div class="brand-icon">💰</div>
+            <span>Organiza Finance</span>
+        </a>
+        <ul class="navbar-nav">
+            <li><a href="index.html" class="nav-link" id="nav-dashboard">Dashboard</a></li>
+            <li><a href="html/movimentacoes.html" class="nav-link" id="nav-mov">Movimentações</a></li>
+            <li><a href="html/justificativas.html" class="nav-link" id="nav-just">Justificativas</a></li>
+            <li><a href="html/calendario.html" class="nav-link" id="nav-cal">Calendário</a></li>
+            <li><a href="html/relatorio.html" class="nav-link" id="nav-rel">Relatório</a></li>
+        </ul>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+            <span id="theme-icon">🌙</span>
+        </button>
+    </nav>
+
+    <main class="page-wrapper">
+
+        <!-- Cabeçalho -->
+        <div class="page-header">
+            <h1>Dashboard</h1>
+            <p>Visão geral das suas finanças pessoais</p>
+        </div>
+
+        <!-- Cards de resumo -->
+        <div class="stats-grid">
+
+            <div class="stat-card saldo">
+                <span class="stat-icon">💳</span>
+                <div class="stat-label">Saldo Total</div>
+                <div id="stat-saldo" class="stat-value neutral">R$ 0,00</div>
+                <div style="font-size:0.78rem; color:var(--text-muted)">Entradas – Saídas</div>
+            </div>
+
+            <div class="stat-card entrada">
+                <span class="stat-icon">📈</span>
+                <div class="stat-label">Entradas do Mês</div>
+                <div id="stat-entrada" class="stat-value positive">R$ 0,00</div>
+                <div style="font-size:0.78rem; color:var(--text-muted)" id="stat-mes-entrada"></div>
+            </div>
+
+            <div class="stat-card saida">
+                <span class="stat-icon">📉</span>
+                <div class="stat-label">Saídas do Mês</div>
+                <div id="stat-saida" class="stat-value negative">R$ 0,00</div>
+                <div style="font-size:0.78rem; color:var(--text-muted)" id="stat-mes-saida"></div>
+            </div>
+
+            <div class="stat-card total">
+                <span class="stat-icon">🗂️</span>
+                <div class="stat-label">Movimentações</div>
+                <div id="stat-total" class="stat-value accent">0</div>
+                <div style="font-size:0.78rem; color:var(--text-muted)">Registros totais</div>
+            </div>
+
+        </div>
+
+        <!-- Despesas Fixas do Mês (preenchido pelo JS se houver fixas) -->
+        <div id="secao-fixas-dash"></div>
+
+        <!-- Tabela – Últimas movimentações -->
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+                <div>
+                    <div class="card-title">Últimas Movimentações</div>
+                    <div style="font-size:0.85rem; color:var(--text-secondary)">As 5 mais recentes</div>
+                </div>
+                <a href="html/movimentacoes.html" class="btn"
+                    style="background:var(--accent-light);color:var(--accent);font-size:0.82rem;padding:0.45rem 0.9rem;">
+                    Ver todas →
+                </a>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Tipo</th>
+                            <th>Categoria</th>
+                            <th>Valor</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-recentes">
+                        <!-- preenchido pelo JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Atalhos rápidos -->
+        <div
+            style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-top:1.5rem;">
+            <a href="html/movimentacoes.html" class="card"
+                style="display:flex;align-items:center;gap:1rem;text-decoration:none;transition:all .2s;cursor:pointer;">
+                <div
+                    style="width:44px;height:44px;background:var(--accent-light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">
+                    ➕</div>
+                <div>
+                    <div style="font-weight:700;font-size:0.9rem;">Nova Movimentação</div>
+                    <div style="font-size:0.78rem;color:var(--text-muted);">Registrar entrada ou saída</div>
+                </div>
+            </a>
+            <a href="html/relatorio.html" class="card"
+                style="display:flex;align-items:center;gap:1rem;text-decoration:none;transition:all .2s;cursor:pointer;">
+                <div
+                    style="width:44px;height:44px;background:rgba(16,185,129,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">
+                    📊</div>
+                <div>
+                    <div style="font-weight:700;font-size:0.9rem;">Relatório Geral</div>
+                    <div style="font-size:0.78rem;color:var(--text-muted);">Filtrar e analisar dados</div>
+                </div>
+            </a>
+            <a href="html/calendario.html" class="card"
+                style="display:flex;align-items:center;gap:1rem;text-decoration:none;transition:all .2s;cursor:pointer;">
+                <div
+                    style="width:44px;height:44px;background:rgba(251,191,36,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">
+                    📅</div>
+                <div>
+                    <div style="font-weight:700;font-size:0.9rem;">Calendário</div>
+                    <div style="font-size:0.78rem;color:var(--text-muted);">Ver por data</div>
+                </div>
+            </a>
+        </div>
+
+    </main>
+
+    <script src="js/script.js"></script>
+    <script>
+        // Exibe o mês atual nos sub-labels
+        const mesAtual = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        const mesFormatado = mesAtual.charAt(0).toUpperCase() + mesAtual.slice(1);
+        document.getElementById('stat-mes-entrada').textContent = mesFormatado;
+        document.getElementById('stat-mes-saida').textContent = mesFormatado;
+
+        // Ativa o link do dashboard
+        document.getElementById('nav-dashboard').classList.add('active');
+    </script>
+</body>
+
+</html>
