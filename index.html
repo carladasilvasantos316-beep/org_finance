@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard – Organiza Finance</title>
+    <meta name="description" content="Painel principal com resumo do saldo, entradas e saídas do mês." />
+    <link rel="stylesheet" href="css/style.css" />
+    <!-- ── SDK do Supabase ── -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+    <!-- ── Navegação ── -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <div class="brand-icon">💰</div>
+            <span>Organiza Finance</span>
+        </a>
+        <ul class="navbar-nav">
+            <li><a href="index.html" class="nav-link" id="nav-dashboard">Dashboard</a></li>
+            <li><a href="html/movimentacoes.html" class="nav-link" id="nav-mov">Movimentações</a></li>
+            <li><a href="html/bancos.html" class="nav-link" id="nav-banks">Bancos</a></li>
+            <li><a href="html/invest.html" class="nav-link" id="nav-invest">Invest</a></li>
+            <li><a href="html/calendario.html" class="nav-link" id="nav-cal">Calendário</a></li>
+            <li><a href="html/relatorio.html" class="nav-link" id="nav-rel">Relatório</a></li>
+        </ul>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+            <span id="theme-icon">🌙</span>
+        </button>
+    </nav>
+
+    <main class="page-wrapper">
+
+        <!-- Cabeçalho -->
+        <div class="page-header">
+            <h1>Dashboard</h1>
+            <p>Visão geral das suas finanças pessoais</p>
+        </div>
+
+        <!-- Cards de resumo -->
+        <div class="stats-grid">
+
+            <div class="stat-card saldo">
+                <span class="stat-icon">💳</span>
+                <div class="stat-label">Saldo Total</div>
+                <div id="stat-saldo" class="stat-value neutral">R$ 0,00</div>
+                <div style="font-size:0.78rem; color:var(--text-muted)">Entradas – Saídas</div>
+            </div>
+
+            <div class="stat-card entrada">
+                <span class="stat-icon">📈</span>
+                <div class="stat-label">Entradas do Mês</div>
+                <div id="stat-entrada" class="stat-value positive">R$ 0,00</div>
+                <div style="font-size:0.78rem; color:var(--text-muted)" id="stat-mes-entrada"></div>
+            </div>
+
+            <div class="stat-card saida">
+                <span class="stat-icon">📉</span>
+                <div class="stat-label">Saídas do Mês</div>
+                <div id="stat-saida" class="stat-value negative">R$ 0,00</div>
+                <div style="font-size:0.78rem; color:var(--text-muted)" id="stat-mes-saida"></div>
+            </div>
+
+            <div class="stat-card total">
+                <span class="stat-icon">🗂️</span>
+                <div class="stat-label">Movimentações</div>
+                <div id="stat-total" class="stat-value accent">0</div>
+                <div style="font-size:0.78rem; color:var(--text-muted)">Registros totais</div>
+            </div>
+
+        </div>
+
+        <!-- Despesas Fixas do Mês (preenchido pelo JS se houver fixas) -->
+        <div id="secao-fixas-dash"></div>
+
+        <!-- Tabela – Últimas movimentações -->
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+                <div>
+                    <div class="card-title">Últimas Movimentações</div>
+                    <div style="font-size:0.85rem; color:var(--text-secondary)">As 5 mais recentes</div>
+                </div>
+                <a href="html/movimentacoes.html" class="btn"
+                    style="background:var(--accent-light);color:var(--accent);font-size:0.82rem;padding:0.45rem 0.9rem;">
+                    Ver todas →
+                </a>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Tipo</th>
+                            <th>Categoria</th>
+                            <th>Banco</th>
+                            <th>Valor</th>
+                            <th>Descrição</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-recentes">
+                        <!-- Preenchido dinamicamente via JS e Supabase -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Atalhos rápidos -->
+        <div
+            style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-top:1.5rem;">
+            <a href="html/movimentacoes.html" class="card"
+                style="display:flex;align-items:center;gap:1rem;text-decoration:none;transition:all .2s;cursor:pointer;">
+                <div
+                    style="width:44px;height:44px;background:var(--accent-light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">
+                    ➕</div>
+                <div>
+                    <div style="font-weight:700;font-size:0.9rem;">Nova Movimentação</div>
+                    <div style="font-size:0.78rem;color:var(--text-muted);">Registrar entrada ou saída</div>
+                </div>
+            </a>
+            <a href="html/relatorio.html" class="card"
+                style="display:flex;align-items:center;gap:1rem;text-decoration:none;transition:all .2s;cursor:pointer;">
+                <div
+                    style="width:44px;height:44px;background:rgba(16,185,129,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">
+                    📊</div>
+                <div>
+                    <div style="font-weight:700;font-size:0.9rem;">Relatório Geral</div>
+                    <div style="font-size:0.78rem;color:var(--text-muted);">Filtrar e analisar dados</div>
+                </div>
+            </a>
+            <a href="html/calendario.html" class="card"
+                style="display:flex;align-items:center;gap:1rem;text-decoration:none;transition:all .2s;cursor:pointer;">
+                <div
+                    style="width:44px;height:44px;background:rgba(251,191,36,0.12);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">
+                    📅</div>
+                <div>
+                    <div style="font-weight:700;font-size:0.9rem;">Calendário</div>
+                    <div style="font-size:0.78rem;color:var(--text-muted);">Ver por data</div>
+                </div>
+            </a>
+        </div>
+
+    </main>
+
+    <!-- ── Modal de Edição ── -->
+    <div id="modal-edicao" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Editar Movimentação</h2>
+                <button type="button" class="close-btn" onclick="fecharModalEdicao()">&times;</button>
+            </div>
+            <form onsubmit="confirmarEdicao(event)">
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <div class="type-toggle">
+                        <button type="button" id="edit-btn-entrada" class="type-btn" onclick="selecionarTipoEdicao('entrada')">↑ Entrada</button>
+                        <button type="button" id="edit-btn-saida" class="type-btn" onclick="selecionarTipoEdicao('saida')">↓ Saída</button>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-valor">Valor (R$)</label>
+                        <input id="edit-valor" type="number" step="0.01" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-data">Data</label>
+                        <input id="edit-data" type="date" class="form-control" required />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex:1;">
+                        <label for="edit-categoria">Categoria</label>
+                        <select id="edit-categoria" class="form-control" required></select>
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label for="edit-banco">Banco / Conta</label>
+                        <select id="edit-banco" class="form-control" required></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="edit-descricao">Descrição</label>
+                    <input id="edit-descricao" type="text" class="form-control" maxlength="120" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" onclick="fecharModalEdicao()" style="background:transparent; border:1px solid var(--border);">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+
+    <script>
+        // Configuração das Chaves do Supabase
+        const SUPABASE_URL = 'https://mgjezmpcxbamhrqwxkbn.supabase.co/rest/v1/';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1namV6bXBjeGJhbWhycXd4a2JuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwOTg3NjMsImV4cCI6MjEwMjY3NDc2M30.l9KDv1EWJfPnGCS-cOWOg6uP8mzHiHfg6W4E4Rhp0lk'; // Substitua pela sua anonymous key do Supabase
+
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Sub-labels do Mês
+        const mesAtualData = new Date();
+        const mesAtual = mesAtualData.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        const mesFormatado = mesAtual.charAt(0).toUpperCase() + mesAtual.slice(1);
+        document.getElementById('stat-mes-entrada').textContent = mesFormatado;
+        document.getElementById('stat-mes-saida').textContent = mesFormatado;
+
+        // Ativa link do menu
+        document.getElementById('nav-dashboard').classList.add('active');
+
+        // Função de formatação para moeda (R$)
+        function formatarMoeda(valor) {
+            return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        // Carrega dados dinâmicos do Supabase
+        async function carregarDashboard() {
+            const { data: lancamentos, error } = await _supabase
+                .from('gastos')
+                .select('*')
+                .order('id', { ascending: false });
+
+            if (error) {
+                console.error('Erro ao buscar movimentações:', error);
+                return;
+            }
+
+            let saldoTotal = 0;
+            let entradasMes = 0;
+            let saidasMes = 0;
+
+            const anoAtual = mesAtualData.getFullYear();
+            const mesNumAtual = mesAtualData.getMonth();
+
+            lancamentos.forEach(item => {
+                const valor = parseFloat(item.valor) || 0;
+                
+                // Trata a data para verificar se é do mês atual
+                let dataItem = new Date();
+                if (item.data) {
+                    const partesData = item.data.split('-');
+                    dataItem = new Date(partesData[0], partesData[1] - 1, partesData[2]);
+                }
+
+                const ehMesAtual = dataItem.getFullYear() === anoAtual && dataItem.getMonth() === mesNumAtual;
+
+                if (item.tipo === 'entrada') {
+                    saldoTotal += valor;
+                    if (ehMesAtual) entradasMes += valor;
+                } else {
+                    saldoTotal -= valor;
+                    if (ehMesAtual) saidasMes += valor;
+                }
+            });
+
+            // Atualiza os Cards de Resumo
+            document.getElementById('stat-saldo').textContent = formatarMoeda(saldoTotal);
+            document.getElementById('stat-entrada').textContent = formatarMoeda(entradasMes);
+            document.getElementById('stat-saida').textContent = formatarMoeda(saidasMes);
+            document.getElementById('stat-total').textContent = lancamentos.length;
+
+            // Preenche a tabela com as 5 últimas movimentações
+            const tbody = document.getElementById('tbody-recentes');
+            tbody.innerHTML = '';
+
+            const ultimas5 = lancamentos.slice(0, 5);
+
+            if (ultimas5.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Nenhuma movimentação registrada.</td></tr>';
+                return;
+            }
+
+            ultimas5.forEach(item => {
+                const tr = document.createElement('tr');
+
+                // Formata Data
+                let dataExibicao = item.data || '';
+                if (item.data && item.data.includes('-')) {
+                    const [ano, mes, dia] = item.data.split('-');
+                    dataExibicao = `${dia}/${mes}/${ano}`;
+                }
+
+                const ehEntrada = item.tipo === 'entrada';
+                const corBadge = ehEntrada ? 'color:#10b981; background:rgba(16,185,129,0.1);' : 'color:#ef4444; background:rgba(239,68,68,0.1);';
+                const textoTipo = ehEntrada ? '↑ Entrada' : '↓ Saída';
+
+                tr.innerHTML = `
+                    <td>${dataExibicao}</td>
+                    <td><span style="padding:0.2rem 0.5rem; border-radius:6px; font-size:0.75rem; font-weight:600; ${corBadge}">${textoTipo}</span></td>
+                    <td>${item.categoria || 'Geral'}</td>
+                    <td>${item.banco || 'Geral'}</td>
+                    <td style="font-weight:600; ${ehEntrada ? 'color:#10b981;' : 'color:#ef4444;'}">
+                        ${ehEntrada ? '+' : '-'} ${formatarMoeda(parseFloat(item.valor))}
+                    </td>
+                    <td>${item.descricao || '-'}</td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Executa ao carregar a página
+        carregarDashboard();
+    </script>
+</body>
+</html>

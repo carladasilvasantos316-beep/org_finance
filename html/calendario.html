@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendário – Organiza Finance</title>
+    <meta name="description" content="Visualize suas movimentações financeiras em um calendário mensal." />
+    <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+
+    <!-- ── Navegação ── -->
+    <nav class="navbar">
+        <a href="../index.html" class="navbar-brand">
+            <div class="brand-icon">💰</div>
+            <span>Organiza Finance</span>
+        </a>
+        <ul class="navbar-nav">
+            <li><a href="../index.html" class="nav-link">Dashboard</a></li>
+            <li><a href="movimentacoes.html" class="nav-link">Movimentações</a></li>
+            <li><a href="bancos.html" class="nav-link" id="nav-banks">Bancos</a></li>
+            <li><a href="invest.html" class="nav-link" id="nav-invest">Invest</a></li>
+            <li><a href="calendario.html" class="nav-link">Calendário</a></li>
+            <li><a href="relatorio.html" class="nav-link">Relatório</a></li>
+        </ul>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+            <span id="theme-icon">🌙</span>
+        </button>
+    </nav>
+
+    <main class="page-wrapper">
+
+        <div class="page-header">
+            <h1>Calendário</h1>
+            <p>Visualize suas movimentações por data</p>
+        </div>
+
+        <!-- Legenda -->
+        <div style="display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:0.4rem; font-size:0.82rem; color:var(--text-secondary);">
+                <span
+                    style="display:inline-block; width:10px; height:10px; background:var(--income); border-radius:2px;"></span>
+                Entrada
+            </div>
+            <div style="display:flex; align-items:center; gap:0.4rem; font-size:0.82rem; color:var(--text-secondary);">
+                <span
+                    style="display:inline-block; width:10px; height:10px; background:var(--expense); border-radius:2px;"></span>
+                Saída
+            </div>
+            <div style="display:flex; align-items:center; gap:0.4rem; font-size:0.82rem; color:var(--text-secondary);">
+                <span
+                    style="display:inline-block; width:10px; height:10px; border:2px solid var(--accent); border-radius:2px;"></span>
+                Hoje
+            </div>
+        </div>
+
+        <!-- Calendário -->
+        <div class="card">
+            <!-- Navegação do mês -->
+            <div class="cal-header">
+                <div class="cal-nav">
+                    <button id="btn-cal-anterior" class="cal-nav-btn">‹</button>
+                    <div id="cal-titulo" class="cal-title">–</div>
+                    <button id="btn-cal-proximo" class="cal-nav-btn">›</button>
+                </div>
+            </div>
+
+            <!-- Nomes dos dias da semana -->
+            <div class="cal-days-header">
+                <div class="cal-day-name">Dom</div>
+                <div class="cal-day-name">Seg</div>
+                <div class="cal-day-name">Ter</div>
+                <div class="cal-day-name">Qua</div>
+                <div class="cal-day-name">Qui</div>
+                <div class="cal-day-name">Sex</div>
+                <div class="cal-day-name">Sáb</div>
+            </div>
+
+            <!-- Grade de dias -->
+            <div id="cal-grid" class="cal-grid">
+                <!-- preenchido pelo JS -->
+            </div>
+        </div>
+
+    </main>
+
+    <script src="../js/script.js"></script>
+</body>
+
+</html>

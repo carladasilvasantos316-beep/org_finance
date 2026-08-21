@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invest (50/30/20) – Organiza Finance</title>
+    <meta name="description" content="Acompanhe suas metas de gastos e investimentos." />
+    <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body>
+
+    <!-- ── Navegação ── -->
+    <nav class="navbar">
+        <a href="../index.html" class="navbar-brand">
+            <div class="brand-icon">💰</div>
+            <span>Organiza Finance</span>
+        </a>
+        <ul class="navbar-nav">
+            <li><a href="../index.html" class="nav-link">Dashboard</a></li>
+            <li><a href="movimentacoes.html" class="nav-link">Movimentações</a></li>
+            <li><a href="bancos.html" class="nav-link">Bancos</a></li>
+            <li><a href="invest.html" class="nav-link active">Invest</a></li>
+            <li><a href="calendario.html" class="nav-link">Calendário</a></li>
+            <li><a href="relatorio.html" class="nav-link">Relatório</a></li>
+        </ul>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+            <span id="theme-icon">🌙</span>
+        </button>
+    </nav>
+
+    <main class="page-wrapper">
+        <div class="page-header">
+            <h1>Estratégia Invest <button class="btn-help" onclick="abrirModalAjuda()" title="O que é a regra 50/30/20?">?</button></h1>
+            <p>Monitore a regra 50/30/20 e otimize suas economias</p>
+        </div>
+
+        <div class="two-col" style="align-items: flex-start;">
+            
+            <!-- Coluna Esquerda: Gráfico e Metas -->
+            <div class="card" style="flex: 1.2;">
+                <div class="card-title">Distribuição Mensal</div>
+                <div class="invest-container">
+                    <div id="invest-graph" class="invest-pie">
+                        <div class="invest-inner">
+                            <span id="total-invest-label">Mês Atual</span>
+                        </div>
+                    </div>
+                    
+                    <div class="invest-legend">
+                        <div class="legend-item">
+                            <span class="dot" style="background: var(--accent);"></span>
+                            <div class="legend-info">
+                                <strong>Essenciais</strong>
+                                <span id="perc-essencial">0%</span>
+                            </div>
+                        </div>
+                        <div class="legend-item">
+                            <span class="dot" style="background: #fbbf24;"></span>
+                            <div class="legend-info">
+                                <strong>Variáveis</strong>
+                                <span id="perc-variavel">0%</span>
+                            </div>
+                        </div>
+                        <div class="legend-item">
+                            <span class="dot" style="background: var(--income);"></span>
+                            <div class="legend-info">
+                                <strong>Investimento</strong>
+                                <span id="perc-invest">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid var(--border); margin: 2rem 0;">
+
+                <div class="card-title" style="font-size: 1rem;">Personalizar Metas (%)</div>
+                <div class="metas-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Essenciais</label>
+                            <input id="meta-essencial" type="number" class="form-control" min="0" max="100" />
+                        </div>
+                        <div class="form-group">
+                            <label>Variáveis</label>
+                            <input id="meta-variavel" type="number" class="form-control" min="0" max="100" />
+                        </div>
+                        <div class="form-group">
+                            <label>Investimento</label>
+                            <input id="meta-invest" type="number" class="form-control" min="0" max="100" />
+                        </div>
+                    </div>
+                    <button id="btn-salvar-metas" class="btn btn-primary" style="margin-top: 1rem; width: 100%;">
+                        💾 Atualizar Metas
+                    </button>
+                </div>
+            </div>
+
+            <!-- Coluna Direita: Maiores Gastos e Estatísticas -->
+            <div class="card" style="flex: 1;">
+                <div class="card-title">Resumo por Pilar</div>
+                
+                <div class="invest-stats-list">
+                    <!-- Essencial -->
+                    <div class="invest-stat-item" onclick="mostrarDetalhesPilar('essencial')" style="cursor: pointer;">
+                        <div class="stat-header">
+                            <span class="stat-icon-sm" style="background: var(--accent-light); color: var(--accent);">🏠</span>
+                            <strong>Essenciais</strong>
+                        </div>
+                        <div class="stat-body">
+                            <div class="stat-row"><span>Total gasto:</span> <span id="val-essencial" class="val-bold">R$ 0,00</span></div>
+                            <div class="stat-row"><span>Maior valor:</span> <span id="max-essencial" class="max-badge">R$ 0,00</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Variável -->
+                    <div class="invest-stat-item" onclick="mostrarDetalhesPilar('variavel')" style="cursor: pointer;">
+                        <div class="stat-header">
+                            <span class="stat-icon-sm" style="background: rgba(251,191,36,0.15); color: #fbbf24;">🎡</span>
+                            <strong>Variáveis</strong>
+                        </div>
+                        <div class="stat-body">
+                            <div class="stat-row"><span>Total gasto:</span> <span id="val-variavel" class="val-bold">R$ 0,00</span></div>
+                            <div class="stat-row"><span>Maior valor:</span> <span id="max-variavel" class="max-badge">R$ 0,00</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Investimento -->
+                    <div class="invest-stat-item" onclick="mostrarDetalhesPilar('invest')" style="cursor: pointer;">
+                        <div class="stat-header">
+                            <span class="stat-icon-sm" style="background: var(--income-bg); color: var(--income);">💎</span>
+                            <strong>Investido</strong>
+                        </div>
+                        <div class="stat-body">
+                            <div class="stat-row"><span>Total aplicado:</span> <span id="val-invest" class="val-bold">R$ 0,00</span></div>
+                            <div class="stat-row"><span>Maior aporte:</span> <span id="max-invest" class="max-badge">R$ 0,00</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert-box info" style="margin-top: 1.5rem;">
+                    <small>💡 Tente manter os <strong>Essenciais em 50%</strong> para garantir segurança financeira.</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista Minimalista de Movimentações (preenchida via JS ao clicar no pilar) -->
+        <div id="pilar-details-container" class="card mini-list-card" style="display:none; margin-top:2rem; animation: slideUp 0.3s ease;"></div>
+    </main>
+
+    <!-- Modal de Edição (Shared) -->
+    <div id="modal-edicao" class="modal" style="display:none;"></div>
+
+    <!-- Modal de Ajuda (50/30/20) -->
+    <div id="modal-ajuda" class="modal">
+        <div class="modal-content" style="max-width: 550px;">
+            <div class="modal-header">
+                <h2>Como funciona a regra 50/30/20?</h2>
+                <button class="close-btn" onclick="fecharModalAjuda()">&times;</button>
+            </div>
+            <div class="help-content">
+                <p>O sistema categoriza suas <strong>saídas e despesas fixas ativas</strong> do mês para ajudar você a equilibrar suas finanças:</p>
+                
+                <div class="help-item">
+                    <span class="help-icon">🏠</span>
+                    <div class="help-text">
+                        <strong>Essenciais (50%)</strong>
+                        <p>Custos fixos e indispensáveis: Moradia, Alimentação, Transporte, Saúde, Educação e Serviços. <strong>Nota: Todas as movimentações fixas (📌) são classificadas como Essenciais.</strong></p>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <div class="help-icon" style="background: rgba(251,191,36,0.15); color: #fbbf24;">🎡</div>
+                    <div class="help-text">
+                        <h3>Variáveis (30%)</h3>
+                        <p>Gastos com estilo de vida e desejos pessoais:</p>
+                        <ul class="help-list">
+                            <li>Lazer, Vestuário e Outros (inclui categorias personalizadas).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <div class="help-icon" style="background: var(--income-bg); color: var(--income);">💎</div>
+                    <div class="help-text">
+                        <h3>Investimentos (20%)</h3>
+                        <p>Foco no seu futuro e reserva de emergência:</p>
+                        <ul class="help-list">
+                            <li>Aplicações financeiras e aportes sob a categoria "Investimento".</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="alert-box info" style="margin-top: 0.5rem; font-size: 0.8rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); padding: 0.75rem; border-radius: 8px; color: var(--text-primary);">
+                    💡 <strong>Dica:</strong> Você pode ajustar essas metas (%) no formulário para se adequar ao seu momento atual.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="fecharModalAjuda()" style="margin-top: 0;">Entendi!</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/script.js"></script>
+</body>
+
+</html>
